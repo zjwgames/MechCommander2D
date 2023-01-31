@@ -35,8 +35,6 @@ public class Movement : MonoBehaviour
     {
         // Lerp position
         var newPosition = rb.position + movement * moveSpeed * Time.fixedDeltaTime;
-        Debug.Log(rb.position);
-        Debug.Log(newPosition);
         rb.MovePosition(Vector2.Lerp(rb.position, newPosition, acceleration * Time.fixedDeltaTime));
 
         legs.position = rb.position;
