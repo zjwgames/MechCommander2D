@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class Bullet : MonoBehaviour
 {
+    public AudioClip hit;
     public float maxLifetime = 1f;
     private float lifetime = 0f;
 
@@ -15,6 +16,7 @@ public class Bullet : MonoBehaviour
 
     void OnCollisionEnter2D(Collision2D collision)
     {
+        AudioSource.PlayClipAtPoint(hit, transform.position, 1.5f);
         Destroy(gameObject);
     }
 }

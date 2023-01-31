@@ -32,7 +32,6 @@ public class EnemyMovement : MonoBehaviour
 
     void Update()
     {
-        Debug.Log(state);
         switch (state)
         {
             case State.Idle:

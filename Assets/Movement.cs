@@ -5,6 +5,9 @@ using static UnityEngine.GraphicsBuffer;
 
 public class Movement : MonoBehaviour
 {
+    public AudioSource audioSource;
+
+    public AudioClip tankMoving;
 
     public float moveSpeed = 5f;
 
@@ -51,5 +54,14 @@ public class Movement : MonoBehaviour
         var startRotation = rb.transform.rotation;
         var endRotation = Quaternion.AngleAxis(angle, Vector3.forward);
         rb.transform.rotation = Quaternion.Slerp(startRotation, endRotation, rotationSpeed * Time.fixedDeltaTime);
+
+        if (movement.magnitude > 0) {
+            Debug.Log("Playing tank moving");
+            if (!audioSource.isPlaying) audioSource.Play();
+        } else
+        {
+            Debug.Log("Tank stopped");
+            audioSource.Stop();
+        }
     }
 }
