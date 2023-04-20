@@ -5,13 +5,12 @@ using UnityEngine;
 public class Zoom : MonoBehaviour
 {
     public float zoomLevel = 20f;
-    public float zoomSpeed = 2f;
+    public float zoomSpeed = 10f;
     public float minimumZoom = 5f;
     public float maximumZoom = 100f;
 
     public Camera cam;
 
-    // Update is called once per frame
     void Update()
     {
         zoomLevel -= Input.GetAxisRaw("Mouse ScrollWheel") * zoomSpeed;

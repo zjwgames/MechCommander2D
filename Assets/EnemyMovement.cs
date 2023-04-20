@@ -8,7 +8,7 @@ public class EnemyMovement : MonoBehaviour
     public float minDist = 5f;
     public float maxDist = 15f;
     public float speed = 0.5f;
-    public GameObject player;
+    public GameObject mech;
     enum Direction
     {
         Left,
@@ -21,7 +21,7 @@ public class EnemyMovement : MonoBehaviour
         None,
         Idle,
         Roam,
-        ChasePlayer
+        ChaseMech
     };
     private State state;
 
@@ -40,8 +40,8 @@ public class EnemyMovement : MonoBehaviour
             case State.Roam:
                 Roam();
                 break;
-            case State.ChasePlayer:
-                ChasePlayer();
+            case State.ChaseMech:
+                ChaseMech();
                 break;
             default:
                 state = State.Idle;
@@ -49,9 +49,9 @@ public class EnemyMovement : MonoBehaviour
         }
     }
 
-    void ChasePlayer()
+    void ChaseMech()
     {
-        Vector3 localPosition = player.transform.position - transform.position;
+        Vector3 localPosition = mech.transform.position - transform.position;
         if (localPosition.sqrMagnitude >= minDist * minDist)
         {
             if (localPosition.sqrMagnitude <= maxDist * maxDist)
@@ -96,17 +96,17 @@ public class EnemyMovement : MonoBehaviour
                 transform.Translate(0, 1 * Time.deltaTime * speed, 0);
                 break;
         }
-        ScanForPlayer();
+        ScanForMech();
     }
 
-    void ScanForPlayer()
+    void ScanForMech()
     {
-        Vector3 localPosition = player.transform.position - transform.position;
+        Vector3 localPosition = mech.transform.position - transform.position;
         if (localPosition.sqrMagnitude >= minDist * minDist)
         {
             if (localPosition.sqrMagnitude <= maxDist * maxDist)
             {
-                state = State.ChasePlayer;
+                state = State.ChaseMech;
             }
             else
             {

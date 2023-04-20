@@ -1,11 +1,10 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using static UnityEngine.GraphicsBuffer;
 
-public class Movement : MonoBehaviour
+public class Movement : Mech
 {
-    public AudioSource audioSource;
+    public AudioSource movementAudioSource;
 
     public AudioClip tankMoving;
 
@@ -17,21 +16,29 @@ public class Movement : MonoBehaviour
 
     public Rigidbody2D rb;
 
-    Vector2 movement;
+    public Vector2 movement;
 
     Vector3 mousePos;
 
-    public Camera cam;
+    private Camera cam;
 
     public Transform legs;
+
+    private void Start()
+    {
+        cam = Camera.main;
+    }
 
     // Update is called once per frame
     void Update()
     {
-        movement.x = Input.GetAxisRaw("Horizontal");
-        movement.y = Input.GetAxisRaw("Vertical");
+        if (GetComponent<Mech>().isSelected)
+        {
+            movement.x = Input.GetAxisRaw("Horizontal");
+            movement.y = Input.GetAxisRaw("Vertical");
 
-        mousePos = cam.ScreenToWorldPoint(Input.mousePosition);
+            mousePos = cam.ScreenToWorldPoint(Input.mousePosition);
+        }        
     }
 
     void FixedUpdate()
@@ -56,12 +63,10 @@ public class Movement : MonoBehaviour
         rb.transform.rotation = Quaternion.Slerp(startRotation, endRotation, rotationSpeed * Time.fixedDeltaTime);
 
         if (movement.magnitude > 0) {
-            Debug.Log("Playing tank moving");
-            if (!audioSource.isPlaying) audioSource.Play();
+            if (!movementAudioSource.isPlaying) movementAudioSource.Play();
         } else
         {
-            Debug.Log("Tank stopped");
-            audioSource.Stop();
+            movementAudioSource.Stop();
         }
     }
 }
