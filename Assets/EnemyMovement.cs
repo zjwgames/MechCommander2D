@@ -8,7 +8,7 @@ public class EnemyMovement : MonoBehaviour
     public float minDist = 5f;
     public float maxDist = 15f;
     public float speed = 0.5f;
-    public GameObject mech;
+    private GameObject mech;
     enum Direction
     {
         Left,
@@ -27,6 +27,7 @@ public class EnemyMovement : MonoBehaviour
 
     private void Start()
     {
+        mech = GameObject.Find("Mech");
         state = State.Idle;
     }
 
