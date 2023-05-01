@@ -20,7 +20,7 @@ public class EnemyBullet : MonoBehaviour
         if (collision.gameObject.tag.Contains("Player") || collision.gameObject.tag.Contains("Enemy"))
         {
             // Check if the collided object has a health component
-            Health health = collision.gameObject.GetComponent<Health>();
+            Health health = collision.gameObject.GetComponentInParent<Health>();
             if (health != null) health.TakeDamage(damageAmount);
         }
     }

@@ -51,6 +51,7 @@ public class EnemyMovement : MonoBehaviour
     private void Start()
     {
         state = State.Idle;
+        targetTag = "Player";
     }
 
     void Update()
@@ -80,11 +81,13 @@ public class EnemyMovement : MonoBehaviour
         Collider2D[] colliders = Physics2D.OverlapCircleAll(transform.position, searchRadius);
 
         float closestDistance = Mathf.Infinity;
+        bool foundPlayer = false;
 
         foreach (Collider2D collider in colliders)
         {
             if (collider.gameObject.CompareTag(targetTag))
             {
+                foundPlayer = true;
                 float distance = Vector2.Distance(transform.position, collider.transform.position);
 
                 if (distance < closestDistance)
@@ -94,6 +97,8 @@ public class EnemyMovement : MonoBehaviour
                 }
             }
         }
+
+        if (!foundPlayer) closestObject = null;
     }
 
     void ChaseClosestObject()
@@ -128,30 +133,33 @@ public class EnemyMovement : MonoBehaviour
 
     void ShootClosestObject()
     {
-        // Check if it's time to fire
-        if (fireTimer <= 0f)
+        if (target != null)
         {
-            // Calculate the direction to the target
-            Vector2 direction = target.position - transform.position;
-            direction.Normalize();
+            // Check if it's time to fire
+            if (fireTimer <= 0f)
+            {
+                // Calculate the direction to the target
+                Vector2 direction = target.position - transform.position;
+                direction.Normalize();
 
-            Vector3 dir = new Vector3(direction.x, direction.y, transform.position.z);
+                Vector3 dir = new Vector3(direction.x, direction.y, transform.position.z);
 
-            // Create the bullet
-            GameObject bullet = Instantiate(bulletPrefab, transform.position + dir, Quaternion.identity);
+                // Create the bullet
+                GameObject bullet = Instantiate(bulletPrefab, transform.position + dir, Quaternion.identity);
 
-            // Set the velocity of the bullet
-            Rigidbody2D bulletRigidbody = bullet.GetComponent<Rigidbody2D>();
-            bulletRigidbody.velocity = direction * bulletSpeed;
+                // Set the velocity of the bullet
+                Rigidbody2D bulletRigidbody = bullet.GetComponent<Rigidbody2D>();
+                bulletRigidbody.velocity = direction * bulletSpeed;
 
-            // Reset the fire timer
-            fireTimer = 1f / fireRate;
-            state = State.ShootClosestObject;
+                // Reset the fire timer
+                fireTimer = 1f / fireRate;
+                state = State.ShootClosestObject;
+            }
+
+            // Decrement the fire timer
+            fireTimer -= Time.deltaTime;
+            state = State.ChaseClosestObject;
         }
-
-        // Decrement the fire timer
-        fireTimer -= Time.deltaTime;
-        //state = State.ChaseClosestObject;
     }
 
     void Idle()
@@ -191,12 +199,14 @@ public class EnemyMovement : MonoBehaviour
             if (currentIdleTime >= Random.Range(minIdleTime, maxIdleTime))
             {
                 // Pick a new direction to move in
-                moveDirection = Quaternion.Euler(0, 0, Random.Range(-turnSpeed, turnSpeed) * Time.deltaTime) * moveDirection;
+                var turnAngle = Random.Range(-turnSpeed, turnSpeed);
+                Quaternion rotation = Quaternion.AngleAxis(turnAngle, Vector3.forward);
+                moveDirection = rotation * moveDirection;
                 isMoving = true;
                 currentIdleTime = 0f;
             }
         }
         if (closestObject != null) state = State.ChaseClosestObject;
-        FindClosestObject();
+        ChaseClosestObject();
     }
 }

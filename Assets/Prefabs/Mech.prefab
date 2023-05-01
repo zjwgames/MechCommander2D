@@ -11,10 +11,10 @@ GameObject:
   - component: {fileID: 3738427157543568759}
   - component: {fileID: 87270461814486790}
   - component: {fileID: 3072767752029416142}
-  - component: {fileID: 6795611089125614108}
-  m_Layer: 0
+  - component: {fileID: 5691070981585217171}
+  m_Layer: 6
   m_Name: Mech
-  m_TagString: Player
+  m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -27,7 +27,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3738427157543568758}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 1}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -75,7 +75,7 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 2.4388554, y: 3.0077052}
   m_EdgeRadius: 0
---- !u!114 &6795611089125614108
+--- !u!114 &5691070981585217171
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -87,7 +87,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 02631225d7006498fbad543ce210310b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  health: 0
+  health: 100
   deathAudio: {fileID: 8300000, guid: 27bc53d4400594a6b9253bf1ee4ca228, type: 3}
 --- !u!1 &3738427158164359176
 GameObject:
@@ -99,9 +99,10 @@ GameObject:
   m_Component:
   - component: {fileID: 3738427158164359177}
   - component: {fileID: 3738427158164359178}
+  - component: {fileID: 2155368195840983835}
   m_Layer: 0
   m_Name: Body
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -114,8 +115,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3738427158164359176}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 3.2716, y: 3.2716, z: 3.2716}
+  m_LocalPosition: {x: 0, y: 0, z: -0.5}
+  m_LocalScale: {x: 3.2716, y: 3.2716, z: 0.9}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 3738427157543568759}
@@ -173,6 +174,32 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!61 &2155368195840983835
+BoxCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3738427158164359176}
+  m_Enabled: 1
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_UsedByEffector: 0
+  m_UsedByComposite: 0
+  m_Offset: {x: -0.008445054, y: -0.019705012}
+  m_SpriteTilingProperty:
+    border: {x: 0, y: 0, z: 0, w: 0}
+    pivot: {x: 0.5, y: 0.5}
+    oldSize: {x: 1.28, y: 1.28}
+    newSize: {x: 19.2, y: 20.805079}
+    adaptiveTilingThreshold: 0.5
+    drawMode: 0
+    adaptiveTiling: 0
+  m_AutoTiling: 0
+  serializedVersion: 2
+  m_Size: {x: 0.6100276, y: 0.6888479}
+  m_EdgeRadius: 0
 --- !u!1 &4125725064501872350
 GameObject:
   m_ObjectHideFlags: 0

@@ -24,23 +24,29 @@ public class Player : MonoBehaviour
 
     void Start()
     {
-        mech.GetComponent<Mech>().isSelected = false;
         state = State.Free;
     }
 
     void Update()
     {
-        switch (state)
+        if (mech != null)
         {
-            case State.Free:
-                Free();
-                break;
-            case State.UnitControl:
-                UnitControl();
-                break;
-            default:
-                state = State.Free;
-                break;
+            switch (state)
+            {
+                case State.Free:
+                    Free();
+                    break;
+                case State.UnitControl:
+                    UnitControl();
+                    break;
+                default:
+                    state = State.Free;
+                    break;
+            }
+        } else
+        {
+            state = State.Free;
+            Free();
         }
     }
 
@@ -49,7 +55,7 @@ public class Player : MonoBehaviour
         moveSpeed = 5f * (GetComponentInChildren<Zoom>().zoomLevel * 0.1f);
         movement.x = Input.GetAxisRaw("Horizontal");
         movement.y = Input.GetAxisRaw("Vertical");
-        if (Input.GetButtonDown("Switch"))
+        if (Input.GetButtonDown("Switch") && mech != null)
         {
             mech.GetComponent<Mech>().isSelected = true;
             state = State.UnitControl;
