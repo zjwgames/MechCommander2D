@@ -148,7 +148,7 @@ MonoBehaviour:
   maxDist: 15
   speed: 0.5
   targetTag: Player
-  searchRadius: 15
+  searchRadius: 10
   closestObject: {fileID: 0}
   moveSpeed: 1
   turnSpeed: 90
@@ -157,7 +157,7 @@ MonoBehaviour:
   maxIdleTime: 3
   target: {fileID: 0}
   bulletPrefab: {fileID: 3372053460709349756, guid: 5fa2591d76c970d48bac7364e183e81b, type: 3}
-  bulletSpeed: 10
+  bulletSpeed: 8
   fireRate: 1
   state: 0
 --- !u!114 &1788180626318116405
