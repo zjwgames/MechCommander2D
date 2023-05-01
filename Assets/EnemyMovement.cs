@@ -1,14 +1,35 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;
 
 public class EnemyMovement : MonoBehaviour
 {
     public float minDist = 5f;
     public float maxDist = 15f;
     public float speed = 0.5f;
-    private GameObject mech;
+
+    public string targetTag;
+    public float searchRadius;
+
+    public GameObject closestObject;
+
+    public float moveSpeed = 3f;        // Speed at which the enemy moves
+    public float turnSpeed = 180f;      // Speed at which the enemy turns
+    public float moveDistance = 5f;     // Distance the enemy moves before stopping
+    public float minIdleTime = 1f;      // Minimum time the enemy waits before moving again
+    public float maxIdleTime = 3f;      // Maximum time the enemy waits before moving again
+
+    private float currentMoveDistance;  // Distance the enemy has moved so far
+    private float currentIdleTime;      // Time the enemy has been idle
+    private bool isMoving;              // Flag to indicate if the enemy is currently moving
+    private Vector3 moveDirection;      // Direction the enemy is moving in
+
+    public Transform target;            // Target to shoot at
+    public GameObject bulletPrefab;     // Prefab for the bullet
+    public float bulletSpeed = 10f;     // Speed of the bullet
+    public float fireRate = 1f;         // Rate of fire in shots per second
+
+    private float fireTimer;            // Timer for tracking fire rate
+
     enum Direction
     {
         Left,
@@ -16,18 +37,19 @@ public class EnemyMovement : MonoBehaviour
         Up,
         Down,
     };
-    private enum State
+
+    public enum State
     {
         None,
         Idle,
         Roam,
-        ChaseMech
+        ChaseClosestObject,
+        ShootClosestObject
     };
-    private State state;
+    public State state;
 
     private void Start()
     {
-        mech = GameObject.Find("Mech");
         state = State.Idle;
     }
 
@@ -41,8 +63,11 @@ public class EnemyMovement : MonoBehaviour
             case State.Roam:
                 Roam();
                 break;
-            case State.ChaseMech:
-                ChaseMech();
+            case State.ChaseClosestObject:
+                ChaseClosestObject();
+                break;
+            case State.ShootClosestObject:
+                ShootClosestObject();
                 break;
             default:
                 state = State.Idle;
@@ -50,26 +75,90 @@ public class EnemyMovement : MonoBehaviour
         }
     }
 
-    void ChaseMech()
+    void FindClosestObject()
     {
-        Vector3 localPosition = mech.transform.position - transform.position;
-        if (localPosition.sqrMagnitude >= minDist * minDist)
+        Collider2D[] colliders = Physics2D.OverlapCircleAll(transform.position, searchRadius);
+
+        float closestDistance = Mathf.Infinity;
+
+        foreach (Collider2D collider in colliders)
         {
-            if (localPosition.sqrMagnitude <= maxDist * maxDist)
+            if (collider.gameObject.CompareTag(targetTag))
             {
-                localPosition = localPosition.normalized; // The normalized direction in LOCAL space
-                transform.Translate(localPosition.x * Time.deltaTime * speed, localPosition.y * Time.deltaTime * speed, localPosition.z * Time.deltaTime * speed);
+                float distance = Vector2.Distance(transform.position, collider.transform.position);
+
+                if (distance < closestDistance)
+                {
+                    closestDistance = distance;
+                    closestObject = collider.gameObject;
+                }
+            }
+        }
+    }
+
+    void ChaseClosestObject()
+    {
+        FindClosestObject();
+        if (closestObject != null)
+        {
+            target = closestObject.transform;
+            Vector3 localPosition = closestObject.transform.position - transform.position;
+            if (localPosition.sqrMagnitude >= minDist * minDist)
+            {
+                if (localPosition.sqrMagnitude <= maxDist * maxDist)
+                {
+                    localPosition = localPosition.normalized; // The normalized direction in LOCAL space
+                    transform.Translate(localPosition.x * Time.deltaTime * speed, localPosition.y * Time.deltaTime * speed, localPosition.z * Time.deltaTime * speed);
+                }
+                else
+                {
+                    state = State.Roam;
+                }
+                state = State.ShootClosestObject;
             }
             else
             {
-                state = State.Idle;
+                state = State.Roam;
             }
+        } else
+        {
+            state = State.Roam;
         }
+    }
+
+    void ShootClosestObject()
+    {
+        // Check if it's time to fire
+        if (fireTimer <= 0f)
+        {
+            // Calculate the direction to the target
+            Vector2 direction = target.position - transform.position;
+            direction.Normalize();
+
+            Vector3 dir = new Vector3(direction.x, direction.y, transform.position.z);
+
+            // Create the bullet
+            GameObject bullet = Instantiate(bulletPrefab, transform.position + dir, Quaternion.identity);
+
+            // Set the velocity of the bullet
+            Rigidbody2D bulletRigidbody = bullet.GetComponent<Rigidbody2D>();
+            bulletRigidbody.velocity = direction * bulletSpeed;
+
+            // Reset the fire timer
+            fireTimer = 1f / fireRate;
+            state = State.ShootClosestObject;
+        }
+
+        // Decrement the fire timer
+        fireTimer -= Time.deltaTime;
+        //state = State.ChaseClosestObject;
     }
 
     void Idle()
     {
         StartCoroutine(waitASec());
+        // Start in a random direction
+        moveDirection = Quaternion.Euler(0, 0, Random.Range(0f, 360f)) * Vector3.right;
     }
 
     IEnumerator waitASec()
@@ -80,39 +169,34 @@ public class EnemyMovement : MonoBehaviour
 
     void Roam()
     {
-        
-        var direction = Random.Range(0, 3);
-        switch(direction)
+        if (isMoving)
         {
-            case (int)Direction.Left:
-                transform.Translate(-1 * Time.deltaTime * speed, 0, 0);
-                break;
-            case (int)Direction.Right:
-                transform.Translate(1 * Time.deltaTime * speed, 0, 0);
-                break;
-            case (int)Direction.Up:
-                transform.Translate(0, -1 * Time.deltaTime * speed, 0);
-                break;
-            case (int)Direction.Down:
-                transform.Translate(0, 1 * Time.deltaTime * speed, 0);
-                break;
-        }
-        ScanForMech();
-    }
+            // Move in the current direction
+            transform.position += moveDirection * moveSpeed * Time.deltaTime;
 
-    void ScanForMech()
-    {
-        Vector3 localPosition = mech.transform.position - transform.position;
-        if (localPosition.sqrMagnitude >= minDist * minDist)
-        {
-            if (localPosition.sqrMagnitude <= maxDist * maxDist)
+            // Update the distance moved
+            currentMoveDistance += moveSpeed * Time.deltaTime;
+
+            // Stop moving if the distance has been reached
+            if (currentMoveDistance >= moveDistance)
             {
-                state = State.ChaseMech;
-            }
-            else
-            {
-                state = State.Roam;
+                isMoving = false;
+                currentMoveDistance = 0f;
             }
         }
+        else
+        {
+            // Wait for a random amount of time before moving again
+            currentIdleTime += Time.deltaTime;
+            if (currentIdleTime >= Random.Range(minIdleTime, maxIdleTime))
+            {
+                // Pick a new direction to move in
+                moveDirection = Quaternion.Euler(0, 0, Random.Range(-turnSpeed, turnSpeed) * Time.deltaTime) * moveDirection;
+                isMoving = true;
+                currentIdleTime = 0f;
+            }
+        }
+        if (closestObject != null) state = State.ChaseClosestObject;
+        FindClosestObject();
     }
 }

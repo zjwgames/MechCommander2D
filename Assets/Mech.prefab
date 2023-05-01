@@ -11,9 +11,10 @@ GameObject:
   - component: {fileID: 3738427157543568759}
   - component: {fileID: 87270461814486790}
   - component: {fileID: 3072767752029416142}
+  - component: {fileID: 6795611089125614108}
   m_Layer: 0
   m_Name: Mech
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -74,6 +75,20 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 2.4388554, y: 3.0077052}
   m_EdgeRadius: 0
+--- !u!114 &6795611089125614108
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3738427157543568758}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 02631225d7006498fbad543ce210310b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  health: 0
+  deathAudio: {fileID: 8300000, guid: 27bc53d4400594a6b9253bf1ee4ca228, type: 3}
 --- !u!1 &3738427158164359176
 GameObject:
   m_ObjectHideFlags: 0
